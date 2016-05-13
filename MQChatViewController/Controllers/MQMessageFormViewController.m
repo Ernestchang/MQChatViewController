@@ -300,10 +300,10 @@ static NSString * const kMessageFormMessageKey = @"message";
     CGFloat keyboardMinY = [note.userInfo[UIKeyboardFrameEndUserInfoKey] CGRectValue].origin.y;
     CGFloat keyboardHeight = screenHeight - keyboardMinY;
     
-    UIView *responderView = [self findFirstResponderForParentView:formContainer];
+    UITextView *firstResponderUITextView = [self findFirstResponderUITextView];
     // UITextView单独处理
-    if (responderView && keyboardHeight > 0 && [responderView isKindOfClass:[UITextView class]]) {
-        CGRect rect = [responderView.superview convertRect:responderView.frame toView:[[[UIApplication sharedApplication] delegate] window]];
+    if (firstResponderUITextView && keyboardHeight > 0) {
+        CGRect rect = [firstResponderUITextView.superview convertRect:firstResponderUITextView.frame toView:[[[UIApplication sharedApplication] delegate] window]];
         
         CGFloat responderMinY = rect.origin.y;
         CGFloat responderMaxY = CGRectGetMaxY(rect);
@@ -311,7 +311,7 @@ static NSString * const kMessageFormMessageKey = @"message";
         CGFloat offsetY = 0;
         // 处理UITextView被键盘遮挡的情况
         if (responderMaxY > keyboardMinY) {
-            offsetY = keyboardHeight + responderView.frame.size.height - (screenHeight - responderMinY);
+            offsetY = keyboardHeight + firstResponderUITextView.frame.size.height - (screenHeight - responderMinY);
         }
         // 处理UITextView被导航栏遮挡的情况
         if (responderMinY < 64) {
@@ -332,17 +332,18 @@ static NSString * const kMessageFormMessageKey = @"message";
     }];
 }
 
-- (UIView *)findFirstResponderForParentView:(UIView *)parentView {
-    for (UIView *view1 in parentView.subviews) {
-        if ([view1 isFirstResponder]) {
-            return view1;
-        }
-        
-        if ([view1.subviews count] > 0) {
-            UIView *view2 = [self findFirstResponderForParentView:view1];
-            if (view2) {
-                return view2;
-            }
+
+/**
+ *  查找UITextView第一键盘响应者
+ *
+ *  @return UITextView第一键盘响应者
+ */
+- (UITextView *)findFirstResponderUITextView {
+    UITextView *firstResponderUITextView;
+    for (MQMessageFormInputView *messageFormInputView in messageFormInputViewArray) {
+        firstResponderUITextView = [messageFormInputView findFirstResponderUITextView];
+        if (firstResponderUITextView) {
+            return firstResponderUITextView;
         }
     }
     return nil;

@@ -138,4 +138,16 @@ static CGFloat const kMQMessageFormSpacing   = 16.0;
     }
 }
 
+/**
+ *  查找UITextView第一键盘响应者
+ *
+ *  @return UITextView第一键盘响应者
+ */
+- (UITextView *)findFirstResponderUITextView {
+    if (contentTv && contentTv.isFirstResponder) {
+        return contentTv;
+    }
+    return nil;
+}
+
 @end

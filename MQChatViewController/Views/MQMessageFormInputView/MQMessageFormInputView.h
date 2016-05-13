@@ -17,4 +17,6 @@
 
 - (NSString *)getText;
 
+- (UITextView *)findFirstResponderUITextView;
+
 @end
